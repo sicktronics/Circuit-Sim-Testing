@@ -4,3 +4,6 @@ Component base class
 |
 V
 Resistor_5p_Tol
+
+
+Circuit class
