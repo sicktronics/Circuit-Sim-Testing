@@ -1,4 +1,5 @@
 #include "Component.h"
+#pragma once
 
 class CurrentSource final: public Component {
 

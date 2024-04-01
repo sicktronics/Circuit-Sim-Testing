@@ -1,4 +1,5 @@
 #include "Component.h"
+#pragma once
 
 class VoltageSource final: public Component {
 

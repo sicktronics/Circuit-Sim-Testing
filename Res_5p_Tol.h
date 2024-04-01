@@ -1,4 +1,5 @@
 #include "Component.h"
+#pragma once
 
 class Res_5p_Tol final: public Component {
 
