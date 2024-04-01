@@ -1,9 +1,4 @@
 # Circuit-Sim-Testing
 
-Component base class
-|
-V
-Resistor_5p_Tol
-
-
-Circuit class
+This repository is home to C++ code that should simulate linear and nonlinear circuit components in a SPICE-y style.
+Ultimately, this code will be integrated with an Unreal circuit simulation project.
