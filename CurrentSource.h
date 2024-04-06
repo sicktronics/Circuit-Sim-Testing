@@ -1,11 +1,12 @@
 #include "Component.h"
 #pragma once
 
-class CurrentSource final: public Component {
+struct CurrentSource: Component {
 
     double amps;
-public:
-    CurrentSource();       // Constructor.
-    ~CurrentSource();      // Destructor.
+    // int compID = 2;
+
+    CurrentSource(){compID=2;};       // Constructor.
+    // ~CurrentSource();      // Destructor.
     void setCurrent(double amperage);  // Setting how many amps the source provides.
 };

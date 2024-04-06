@@ -2,17 +2,21 @@
 #pragma once
 
 // Base Component - ins from https://electronics.stackexchange.com/questions/239532/how-does-spice-parse-a-netlist
-class Component {
+struct Component {
     std::vector<int> inputs;    // Vector of input nodes
     std::vector<int> outputs;   // Vector of output nodes
-public:
-    Component();                    // Constructor.
-    virtual ~Component();           // Destructor.
     int compID;
 
-    virtual void addInput(int n);   // Function for adding an input node
-    virtual void addOutput(int n);  // Function for adding an output node
+    Component(){};                // Constructor.
+    // virtual ~Component();       // Destructor.
+
+    // LEARN MORE ABOUT VIRTUAL. IT IS CAUSING ISSUES
+    // RESOURCES: https://stackoverflow.com/questions/31861803/a-missing-vtable-usually-means-the-first-non-inline-virtual-member-function-has
+    // https://www.simplilearn.com/tutorials/cpp-tutorial/virtual-function-in-cpp
+    // Virtual functions MUST be defined in the base class
+    void addInput(int n);   // Function for adding an input node
+    void addOutput(int n);  // Function for adding an output node
 
     // virtual method for checking component id
-    virtual int returnCompID();
+    // int returnCompID();
 };

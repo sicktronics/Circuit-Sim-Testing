@@ -7,6 +7,8 @@ void VoltageSource::setVoltage(double voltage){
     volts = voltage;
 }
 
-VoltageSource::VoltageSource(){
-    compID = 1;
-}
+// VoltageSource::VoltageSource(){
+    
+// }
+
+// VoltageSource::~VoltageSource() = default;

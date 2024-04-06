@@ -7,6 +7,8 @@ void CurrentSource::setCurrent(double amperage){
     amps = amperage;
 }
 
-CurrentSource::CurrentSource(){
-    compID = 2;
-}
+// CurrentSource::CurrentSource(){
+//     compID = 2;
+// }
+
+// CurrentSource::~CurrentSource() = default;

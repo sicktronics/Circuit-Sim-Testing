@@ -13,6 +13,6 @@ void Res_5p_Tol::setOhmage(double ohmage){
     ohm = ohmage;
 }
 
-Res_5p_Tol::Res_5p_Tol(){
-    compID = 0;
-}
+
+
+// Res_5p_Tol::~Res_5p_Tol() = default;

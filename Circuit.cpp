@@ -2,10 +2,20 @@
 
 void Circuit::addComponent(Component *compToAdd){
     // Adding the new component to the components vector
-    components.push_back(compToAdd);
 
     // STAERT HERE
     // IF components size is 0, (aka first element) add to list
+    if(components.size() < 1){
+        components.push_back(compToAdd);
+    }
+    else{
+        for(int i = 1; i < components.size(); i++){
+            if(components[i]->inputs[0] > components[i-1]->inputs[0]){ 
+                // add the component to the next spot
+                components.insert(components.begin() + i, compToAdd);
+            }
+        }
+    }
     // Other wise IF components size is not zero, check for
     // if the new input node # is greater than the max, add it to the list
 }
