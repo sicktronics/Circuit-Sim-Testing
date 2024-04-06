@@ -1,8 +1,6 @@
 #include "Res_5p_Tol.h"
 
-// This base component class is a resistor with +/- 5 percent tolerance.
-
-
+// This component class is a resistor with +/- 5 percent tolerance.
 void Res_5p_Tol::setOhmage(double ohmage){
 
     /* TO DO: Generate error*/
@@ -13,6 +11,3 @@ void Res_5p_Tol::setOhmage(double ohmage){
     ohm = ohmage;
 }
 
-
-
-// Res_5p_Tol::~Res_5p_Tol() = default;

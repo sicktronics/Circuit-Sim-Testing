@@ -4,9 +4,6 @@
 struct Res_5p_Tol: Component {
 
     double ohm;
-    // int compID = 0;
-    Res_5p_Tol(){compID = 0;};       // Constructor.
-    // ~Res_5p_Tol();      // Destructor.
+    Res_5p_Tol(){compID = 0;};       // Constructor that sets the compID.
     void setOhmage(double ohmage);  // setting how many ohms of resistance the resistor has.
-
 };

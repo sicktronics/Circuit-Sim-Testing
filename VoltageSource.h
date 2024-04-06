@@ -2,10 +2,7 @@
 #pragma once
 
 struct VoltageSource: Component {
-
-    // int compID = 1;
     double volts;
-    VoltageSource(){compID=1;};       // Constructor.
-    // ~VoltageSource();      // Destructor.
+    VoltageSource(){compID=1;};       // Constructor sets component ID.
     void setVoltage(double voltage);  // Setting how many volts the source provides.
 };
