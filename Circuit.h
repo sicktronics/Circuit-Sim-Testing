@@ -1,7 +1,11 @@
 #include <vector>
 #include "Component.h"
 #include "Res_5p_Tol.h"
+#include "VoltageSource.h"
+#include "CurrentSource.h"
 #pragma once
+
+// Gooood morning!!! <3 4/27/24
 
 // Circuit class is where chained components are added and analysis is performed
 // Start w DC OP analysis, don't worry about AC tran for now
@@ -16,8 +20,11 @@ struct Circuit {
     std::vector<Component*> components;    // The netlist - a vector of circuit components
 
     std::vector<Res_5p_Tol*> resistors;
+    std::vector<VoltageSource*> vSrcs;
+    std::vector<CurrentSource*> cSrcs;
 
     int numVS;              // # of voltage sources
+    int numCS;              // # of current sources
     int condMatrixDim;      // dimensions of conductance matrix (impacted by voltage sources)
 
     int numCondNodes;       // number of nodes to which resistors are attached (i.e. are attached to the conductance matrix)
