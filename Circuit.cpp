@@ -83,7 +83,7 @@ void Circuit::dcOp(){
         }
         numCondNodes++;
     }
-    std::cout << "number of cond nodes: " << numCondNodes << std::endl;
+    std::cout << "number of : " << numVS << std::endl;
 
     // Step 1: determine # of voltage variables, create voltage variable vector
     // IF a voltage source, append its current to the end of the voltage variable vector (i.e., I1)
@@ -127,11 +127,25 @@ void Circuit::dcOp(){
 
     // TO DO: ELSE, THAT VALUE IS 0 (sparse matrix)
 
+    // BOOLEANS to check if a certain [i][j] should be
+                // populated with a "1" to account for a vs
+    bool fillRow = false;
+    bool fillCol = false;
+
+    // OFFSET to make sure each relevant i is reached
+    int offset = 0;
+    int iToCheck = offset+numCondNodes;
+
     // For each row...
     for(int i = 0; i < condMatrixDim; i++){
 
-            // TO DO: Fix seg fault
+        iToCheck = offset+numCondNodes;
+        std::cout << "i to check" << iToCheck << std::endl;
 
+        if(i == iToCheck){
+            fillRow = true;
+            std::cout << "fill row!" << std::endl;
+        }
             // SOLUTION (CURRENT) VECTOR --> note condMatrixDim=Dim of solution vector
             // for a node
             for(int k = 0; k < numCS; k++){
@@ -155,6 +169,18 @@ void Circuit::dcOp(){
         // And each column...
         for (int j = 0; j < condMatrixDim; j++)
         {
+
+
+            // flag the column for filling if both the row is flagged and the col corresponds to the output node
+            int currentOutputNode = vSrcs[offset]->outputs[0];
+            int jToCheck = currentOutputNode - 1;
+            if((fillRow == true) && (j == jToCheck)){
+                fillCol = true;
+                std::cout << "fill col!" << std::endl;
+            }
+
+
+
             // For element aii, add all conductances (1/R) directly attached to i
             if(i==j){
                 // iterate over resistors.
@@ -189,27 +215,44 @@ void Circuit::dcOp(){
                 nodeCondNonDiag = 0;
             }
 
-            // If we are assessing the rows dedicated to voltage sources
-            if(i >= numCondNodes){
-                for(int index = 0; index < vSrcs.size(); index++){
+            // TO DO: fix matrix population duplicate!
 
-                    // then if vsrc at node 1 gets hit on the col sweep
-                    if(vSrcs[index]->outputs[0] == (j+1)){
-                        // insert its value
-                        condMatrix[i][j] = 1;
-                        solVector[i] = vSrcs[index]->volts; 
-                    }
-                    // add a 1 in the last column, in the row # corresponding to the node at which the voltage is impacted by the voltage source
-                    if(j >= numCondNodes){
-                        condMatrix[(vSrcs[index]->outputs[0]) - 1][j] = 1;
-                    }
-                    // std::cout << j << std::endl;
-                    // and then remove it (this way you don't duplicate vsrcs)
-                    // NOTE: as of 5/2, this does not appear to be an issue
-                    // vSrcs.erase(vSrcs.begin() + (index));
-                }
+            // If we are assessing the rows dedicated to voltage sources
+            // if(i >= numCondNodes){
+            //     std::cout << "i is " << i << std::endl;
+            //     for(int index = 0; index < vSrcs.size(); index++){
+            //         // add a 1 in the last column, in the row # corresponding to the node at which the voltage is impacted by the voltage source
+            //         if(j >= numCondNodes){
+            //             condMatrix[(vSrcs[index]->outputs[0]) - 1][j] = 1;
+            //         }
+            //         // then if vsrc at node 1 gets hit on the col sweep
+            //         if(vSrcs[index]->outputs[0] == (j+1)){
+            //             // insert its value
+            //             condMatrix[i][j] = 1;
+            //             // if solution vector not already populated
+            //             // if(solVector[i]!=0){continue;}
+            //             solVector[i] = vSrcs[index]->volts; 
+            //             // break;
+            //         }
+            //         // std::cout << j << std::endl;
+            //         // and then remove it (this way you don't duplicate vsrcs)
+            //         // NOTE: as of 5/2, this does not appear to be an issue
+            //         // vSrcs.erase(vSrcs.begin() + (index));
+            //     }
+            // }
+
+            if(fillRow && fillCol){
+                condMatrix[i][j] = 1;
+                condMatrix[j][i] = 1;
+                solVector[i] = vSrcs[offset]->volts;
             }
+            fillCol = false;
+        }
+        if((offset < numVS - 1) && (fillRow)){
+            offset++;
         }        
+        fillRow = false;
+        
     }
 
     // for printing the conductance matrix
@@ -219,7 +262,7 @@ void Circuit::dcOp(){
         }
         std::cout << std::endl;
     }
-    std::cout<< "SOL VECTOR" << std::endl;
+    std::cout<< "SOL VECTOR" << std::endl; 
     for(int i = 0; i < condMatrixDim; i++){
 
         std::cout << solVector[i] << std::endl;

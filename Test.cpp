@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     VoltageSource V2;
     V2.addInput(0);
     V2.addOutput(1);
-    V2.setVoltage(1);
+    V2.setVoltage(2);
 
     Res_5p_Tol R1;
     R1.addInput(1);
