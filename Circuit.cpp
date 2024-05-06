@@ -9,34 +9,38 @@ void Circuit::addComponent(Component *compToAdd){
     }
     else if(compToAdd->compID==2){
         numCS++;
+        std::cout << numCS << std::endl;
     }
     // Adding the new component to the components vector
     // STEP 1 - SORT 
     // IF components size is 0, (aka first element) add to list
-    if(components.size() < 1 || resistors.size() < 1 || vSrcs.size() < 1 || cSrcs.size() < 1){
+    if(components.size() < 1){
+        std::cout << "t 1" << std::endl;
         components.push_back(compToAdd);
-
-        // Add to RES
-        if(compToAdd->compID==0){
-            resistors.push_back((Res_5p_Tol*)compToAdd);
-        }
-        else if(compToAdd->compID==1){
-            vSrcs.push_back((VoltageSource*)compToAdd);
-        }
-        else if(compToAdd->compID==2){
-            cSrcs.push_back((CurrentSource*)compToAdd);
-        }
     }
-
-    // TO DO: ADD CHECK TO MAKE SURE COMPONENT HAS BEEN INITIALIZED WITH AN INPUT AND OUTPUT NODE
-    // Creating the sorted vectors
+    // Add to RES
+    if(compToAdd->compID==0 && resistors.size() < 1){
+        resistors.push_back((Res_5p_Tol*)compToAdd);
+    }
+    else if(compToAdd->compID==1 && vSrcs.size() < 1){
+        std::cout << "t 1.5" << std::endl;
+        vSrcs.push_back((VoltageSource*)compToAdd);
+    }
+    else if(compToAdd->compID==2 && vSrcs.size() < 1){
+        cSrcs.push_back((CurrentSource*)compToAdd);
+    }
     else{
+        std::cout << "t 2" << std::endl;
         // FOR COND MATRIX
         if(compToAdd->compID==0){
-            for(int i = resistors.size() - 1; i >= 0 ; i--){
+            // std::cout << "successful" << std::endl;
+            for(int i = resistors.size() - 1; i >= 0 ; --i){
+                std::cout << "successful 1" << std::endl;
+                std::cout << compToAdd->inputs[0] << std::endl;
                 // Add to RES
                 if(compToAdd->inputs[0] >= resistors[i]->inputs[0]){
                     resistors.insert(resistors.begin() + (i+1), (Res_5p_Tol*)compToAdd);
+                    std::cout << "successful 2" << std::endl;
                     break;
                 }
             }                
@@ -59,6 +63,8 @@ void Circuit::addComponent(Component *compToAdd){
                 }
             }                
         }
+
+
         for(int i = components.size() - 1; i >=0 ; i--){
             if(compToAdd->inputs[0] >= components[i]->inputs[0]){ 
                 // add the component to the next spot
@@ -73,6 +79,8 @@ void Circuit::addComponent(Component *compToAdd){
 // But, when nonlinear devices are included, we will need to upgrade to Newton-Raphson for solving nonlinear SE.
 void Circuit::dcOp(){
 
+    std::cout << "dc op 1" << std::endl;
+
     // STEP 0: Need to track number of nodes in the matrix
     // --Number of resistor nodes--
     for (int i = 0; i < resistors.size(); i++) {
@@ -80,10 +88,12 @@ void Circuit::dcOp(){
         // there are duplicates
         while (i < (resistors.size() - 1) && resistors[i]->inputs[0] == resistors[i + 1]->inputs[0]){
             i++;
+            
         }
         numCondNodes++;
+        
     }
-    std::cout << "number of : " << numVS << std::endl;
+    // std::cout << "number of : " << numVS << std::endl;
 
     // Step 1: determine # of voltage variables, create voltage variable vector
     // IF a voltage source, append its current to the end of the voltage variable vector (i.e., I1)
@@ -140,7 +150,7 @@ void Circuit::dcOp(){
     for(int i = 0; i < condMatrixDim; i++){
 
         iToCheck = offset+numCondNodes;
-        std::cout << "i to check" << iToCheck << std::endl;
+        std::cout << "i to check: " << iToCheck << std::endl;
 
         if(i == iToCheck){
             fillRow = true;
@@ -148,6 +158,9 @@ void Circuit::dcOp(){
         }
             // SOLUTION (CURRENT) VECTOR --> note condMatrixDim=Dim of solution vector
             // for a node
+            std::cout << "c 1" << std::endl;
+            std::cout << numCS << std::endl;
+
             for(int k = 0; k < numCS; k++){
                 // ADD the values of any current sources flowing into that node (ie for which it is an output)
                 if(cSrcs[k]->outputs[0]==(i+1)){
@@ -162,6 +175,7 @@ void Circuit::dcOp(){
                     solVector[i] = 0;
                 }
             }
+            
             // IF VOLTAGE SOURCE:
                 // append each one's VOLTAGE VALUE to the end of the vector
 
@@ -172,12 +186,16 @@ void Circuit::dcOp(){
 
 
             // flag the column for filling if both the row is flagged and the col corresponds to the output node
-            int currentOutputNode = vSrcs[offset]->outputs[0];
-            int jToCheck = currentOutputNode - 1;
-            if((fillRow == true) && (j == jToCheck)){
-                fillCol = true;
-                std::cout << "fill col!" << std::endl;
+            if(vSrcs.size()>0){
+                int currentOutputNode = vSrcs[offset]->outputs[0];
+                int jToCheck = currentOutputNode - 1;
+                if((fillRow == true) && (j == jToCheck)){
+                    fillCol = true;
+                    std::cout << "fill col!" << std::endl;
+                }
+
             }
+
 
 
 
@@ -267,13 +285,6 @@ void Circuit::dcOp(){
 
         std::cout << solVector[i] << std::endl;
     }
-
-
-
-
-
-    // for the number of nodes in the matrix
-
     // Finally, solve this matrix to get voltages at each node
 
 

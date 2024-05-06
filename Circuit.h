@@ -23,8 +23,8 @@ struct Circuit {
     std::vector<VoltageSource*> vSrcs;
     std::vector<CurrentSource*> cSrcs;
 
-    int numVS;              // # of voltage sources
-    int numCS;              // # of current sources
+    int numVS = 0;              // # of voltage sources
+    int numCS = 0;              // # of current sources
     int condMatrixDim;      // dimensions of conductance matrix (impacted by voltage sources)
 
     int numCondNodes;       // number of nodes to which resistors are attached (i.e. are attached to the conductance matrix)
