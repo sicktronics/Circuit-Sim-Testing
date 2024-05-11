@@ -27,6 +27,9 @@ struct Circuit {
     int numCS = 0;              // # of current sources
     int condMatrixDim;      // dimensions of conductance matrix (impacted by voltage sources)
 
+    // std::vector<std::vector<double> > l;     // The lower matrix
+    // std::vector<std::vector<double> > u;     // The upper matrix
+
     int numCondNodes;       // number of nodes to which resistors are attached (i.e. are attached to the conductance matrix)
 
     Circuit(){numVS = 0; numCondNodes = 0;};

@@ -233,32 +233,6 @@ void Circuit::dcOp(){
                 nodeCondNonDiag = 0;
             }
 
-            // TO DO: fix matrix population duplicate!
-
-            // If we are assessing the rows dedicated to voltage sources
-            // if(i >= numCondNodes){
-            //     std::cout << "i is " << i << std::endl;
-            //     for(int index = 0; index < vSrcs.size(); index++){
-            //         // add a 1 in the last column, in the row # corresponding to the node at which the voltage is impacted by the voltage source
-            //         if(j >= numCondNodes){
-            //             condMatrix[(vSrcs[index]->outputs[0]) - 1][j] = 1;
-            //         }
-            //         // then if vsrc at node 1 gets hit on the col sweep
-            //         if(vSrcs[index]->outputs[0] == (j+1)){
-            //             // insert its value
-            //             condMatrix[i][j] = 1;
-            //             // if solution vector not already populated
-            //             // if(solVector[i]!=0){continue;}
-            //             solVector[i] = vSrcs[index]->volts; 
-            //             // break;
-            //         }
-            //         // std::cout << j << std::endl;
-            //         // and then remove it (this way you don't duplicate vsrcs)
-            //         // NOTE: as of 5/2, this does not appear to be an issue
-            //         // vSrcs.erase(vSrcs.begin() + (index));
-            //     }
-            // }
-
             if(fillRow && fillCol){
                 condMatrix[i][j] = 1;
                 condMatrix[j][i] = 1;
@@ -286,6 +260,93 @@ void Circuit::dcOp(){
         std::cout << solVector[i] << std::endl;
     }
     // Finally, solve this matrix to get voltages at each node
+
+    double l[condMatrixDim][condMatrixDim];
+    double u[condMatrixDim][condMatrixDim];
+
+    // Using LU factorization: https://www.tutorialspoint.com/cplusplus-program-to-perform-lu-decomposition-of-any-matrix
+    for (int i = 0; i < condMatrixDim; i++) {
+        for (int j = 0; j < condMatrixDim; j++) {
+            if (j < i){
+                l[j][i] = 0;
+            } else {
+                l[j][i] = condMatrix[j][i];
+                for (int k = 0; k < i; k++) {
+                    l[j][i] = l[j][i] - l[j][k] * u[k][i];
+                }
+            }
+        }
+        for (int j = 0; j < condMatrixDim; j++) {
+            if (j < i){
+                u[i][j] = 0;
+            } else if (j == i){
+                u[i][j] = 1;
+            } else {
+                u[i][j] = condMatrix[i][j] / l[i][i];
+                for (int k = 0; k < i; k++) {
+                    u[i][j] = u[i][j] - ((l[i][k] * u[k][j]) / l[i][i]);
+                }  
+            }
+        }
+    }
+
+    std::cout << " LOWER " << std::endl;
+    for(int i = 0; i < condMatrixDim; i++){
+        for(int j = 0; j < condMatrixDim; j++){
+            std::cout << "[" << l[i][j] << "] " ;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << " UPPER " << std::endl;
+    for(int i = 0; i < condMatrixDim; i++){
+        for(int j = 0; j < condMatrixDim; j++){
+            std::cout << "[" << u[i][j] << "] " ;
+        }
+        std::cout << std::endl;
+    }
+
+    // Now onto solving...https://www.youtube.com/watch?v=GKkUU4T6o08&t=666s
+    double yVector[condMatrixDim];      
+    double xVector[condMatrixDim];
+
+    // STEP 1: Solve Ly = b using forward-sub...https://courses.physics.illinois.edu/cs357/sp2020/notes/ref-9-linsys.html#:~:text=The%20forward%20substitution%20algorithm%20solves%20a%20lower%2Dtriangular%20linear%20system,xj%E2%84%93nn.
+
+    double temp = 0.0;
+
+    for (int i = 0; i < condMatrixDim; i++){
+
+        // Grabbing the i-th solution vector ["b"]
+        temp = solVector[i];
+
+        // subtracting off each of the previous row times y-values
+        for(int j = 0; j < i/*-1?*/; j++){
+            temp -= (l[i][j] * yVector[j]);
+        }
+
+        // Dividing by the diagonal
+        yVector[i] = temp / l[i][i];
+    }
+
+    // STEP 2: Solve Ux = y to find x using backwards sub
+    // double currentResult = 0.0;
+    // double cumulativeSum = 0.0;
+
+    for(int i = condMatrixDim - 1; i >= 0; i--){
+
+        // Grabbing the i-th y vector ["b"]
+        temp = yVector[i];
+
+        // subtracting off each of the previous row times y-values
+        for(int j = i + 1; j < condMatrixDim; j++){
+            temp -= (u[i][j] * xVector[j]);
+        }   
+        // Dividing by the diagonal
+        xVector[i] = temp / u[i][i];
+    }
+
+    for(int k = 0; k < condMatrixDim; k++){
+        std::cout << "X vector at node " << k+1 << ": " << xVector[k] << std::endl;
+    }
 
 
 }
