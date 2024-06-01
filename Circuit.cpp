@@ -14,7 +14,7 @@ void Circuit::addComponent(Component *compToAdd){
     // If you just added a current source, increase counter
     else if(compToAdd->compID==2){
         numCS++;
-        std::cout << numCS << std::endl;
+        // std::cout << numCS << std::endl;
     }
     // IF components size is 0, (aka first element) add to list
     if(components.size() < 1){
@@ -204,10 +204,10 @@ void Circuit::dcOp(){
         std::cout << std::endl;
     }
     // For printing the solution vector
-    std::cout<< "SOLUTION VECTOR: " << std::endl; 
-    for(int i = 0; i < condMatrixDim; i++){
-        std::cout << solVector[i] << std::endl;
-    }
+    // std::cout<< "SOLUTION VECTOR: " << std::endl; 
+    // for(int i = 0; i < condMatrixDim; i++){
+    //     std::cout << solVector[i] << std::endl;
+    // }
 
     // Finally, solve this matrix to get voltages at each node
     double l[condMatrixDim][condMatrixDim];
@@ -287,4 +287,16 @@ void Circuit::dcOp(){
         // Dividing by the diagonal
         xVector[i] = temp / u[i][i];
     }
+
+    std::cout << "SOLUTION: " << std::endl;
+    for(int i = 0; i < condMatrixDim; i++){
+        if(i+1 > numCondNodes){
+            std::cout << "Current across VS into node " << condMatrixDim - numCondNodes + numVS + 1  << ": "<< xVector[i] << "A" << std::endl;
+        }
+        else{
+            std::cout << "Voltage at node " << i+1 << ": "<< xVector[i] << "V" << std::endl;
+        }
+        
+    }
+
 }

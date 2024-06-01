@@ -130,10 +130,5 @@ int main(int argc, char* argv[]) {
     // ckt.addComponent(c07);
     // ckt.addComponent(c08);
 
-    // std::cout << ckt.resistors.size() << std::endl;
-
-
     // ckt.dcOp();
-
-
 }
