@@ -7,37 +7,33 @@
 
 // Gooood morning!!! <3 4/27/24
 
-// Circuit class is where chained components are added and analysis is performed
-// Start w DC OP analysis, don't worry about AC tran for now
+/*
+* To understand the theory behind the code, check out this tutorial series (up to DC Op): https://www.youtube.com/watch?v=1ZhzhWAt7xc
+*/
 
+/*
+* The Circuit struct (public members by default)
+* is home to the actual vector that represents the
+* circuit. Has methods for performing analysis.
+*/
 struct Circuit {
+
     std::vector<std::vector<double> > conductances; // NxN conductance vector matrix
-    std::vector<double> variables;                 // The variables vector
-    std::vector<double> solutions;                 // The solutions vector
+    std::vector<Component*> components;             // The netlist - a vector of circuit components
 
-    // std::vector<int> visitedInNodes;               // Vector of visited input nodes
-
-    std::vector<Component*> components;    // The netlist - a vector of circuit components
-
-    std::vector<Res_5p_Tol*> resistors;
-    std::vector<VoltageSource*> vSrcs;
-    std::vector<CurrentSource*> cSrcs;
+    std::vector<Res_5p_Tol*> resistors;             // A vector of just the resistors in the ckt
+    std::vector<VoltageSource*> vSrcs;              // A vector of just the voltage srcs in the ckt
+    std::vector<CurrentSource*> cSrcs;              // A vector of just the current srcs in the ckt
 
     int numVS = 0;              // # of voltage sources
     int numCS = 0;              // # of current sources
-    int condMatrixDim;      // dimensions of conductance matrix (impacted by voltage sources)
+    int condMatrixDim;          // dimensions of conductance matrix (impacted by voltage sources)
+    int numCondNodes;           // number of nodes to which resistors are attached 
+                                // (i.e. are added to the conductance matrix)
 
-    // std::vector<std::vector<double> > l;     // The lower matrix
-    // std::vector<std::vector<double> > u;     // The upper matrix
-
-    int numCondNodes;       // number of nodes to which resistors are attached (i.e. are attached to the conductance matrix)
-
+    // Constructor with some default initializations
     Circuit(){numVS = 0; numCondNodes = 0;};
 
     void addComponent(Component *compToAdd); // Adding a component to the netlist
-    void dcOp(); // Calculating all voltages and currents at each node
-    // int getCompLen();
-    // TO ADD:
-    //  function for analysis of a circuit..
-    //  void dcAnalysis() or summat
+    void dcOp(); // Calculating all voltages and currents at each node (DC)
 };

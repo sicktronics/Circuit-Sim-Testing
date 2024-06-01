@@ -1,6 +1,6 @@
 #include "Res_5p_Tol.h"
 
-// This component class is a resistor with +/- 5 percent tolerance.
+// Set the ohmage of the resistor
 void Res_5p_Tol::setOhmage(double ohmage){
 
     /* TO DO: Generate error*/

@@ -5,6 +5,13 @@
 #include "Circuit.h"
 #include <iostream>
 
+/*
+* This is the testing ground for performing
+* analysis on actual (fake) circuits. Below
+* are some test circuits, which for now 
+* are made up of current sources, voltage
+* sources, and resistors.
+*/
 int main(int argc, char* argv[]) {
 
     /*
